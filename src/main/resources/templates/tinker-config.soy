@@ -1,0 +1,154 @@
+{namespace stash.templates.tinker.settings}
+
+/**
+ * Tinker config
+ * @param tinkerSettings
+ * @param projReposMap
+ * @param? errors
+ */
+{template .workflowTinkerSettings}
+<html>
+<head>
+	<title>Stash Tinker</title>
+	<meta name="decorator" content="stash.users.account">
+</head>
+<body>
+
+<div id="aui-message-bar"></div>
+<input type="hidden" name="errors" value="{$errors}" id="tinkerError" />
+
+<div class="tinker-settings-panel">
+	<form class="aui" action="" method="POST" id="tinker-form" name="tinker-form">
+		<h2>Stash Tinker configuration.</h2>
+
+		<div class="field-group">
+			<label for="select-project">Project
+        		<span class="aui-icon icon-required"></span>
+        	</label>
+			<select id="select-project" name="project">
+		{foreach $projKey in keys($tinkerSettings.projectInfo)}
+			<option value="{$projKey}">{$tinkerSettings.projectInfo[$projKey]}</option>
+		{/foreach}
+		    </select>
+		    <div class="description">Select a project.</div>
+	    </div>
+	    
+        <div class="field-group">
+        	<label for="repository">Repository
+        		<span class="aui-icon icon-required"></span>
+        	</label>
+
+        	<select id="select-respository" name="repository">
+       		{foreach $reposIndex in keys($tinkerSettings.initRepositories)}
+       			<option value="{$tinkerSettings.initRepositories[$reposIndex]}">{$tinkerSettings.initRepositories[$reposIndex]}</option>
+       		{/foreach}
+        	</select>
+        	<div class="description">The repository that belongs to the project.</div>
+        </div>
+
+		
+		<div class="buttons-container">
+			<div class="buttons">
+				<input type="submit" id="submit" class="aui-button aui-button-primary" name="add_repository" value="Add" />
+			</div>
+		</div>
+	</form>
+
+	{if length(keys($projReposMap)) > 0}
+		<h2>Project-Repository-Information</h2>
+		<table class="aui aui-table-sortable">
+			<thead>
+		        <tr>
+		            <th class="aui-table-column-issue-key">Project KEY</th>
+		            <th>Repository Name</th>
+		            <th>Feature Owner</th>
+		            <th>Reviewers</th>
+		            <th>Remove</th>
+		        <tr>
+		    </thead>
+		    <tbody>
+	    {foreach $projKey in keys($projReposMap)}
+	    	{foreach $reposName in $projReposMap[$projKey]}
+		    	{if $reposName}
+		    	<tr>
+		    		<td>{$projKey}</td>
+		    		<td>{$reposName}</td>
+		    		<td>
+		    			<a href="#" data-proj-key="{$projKey}" data-repos-name="{$reposName}" class="edit-feature-owner">
+		    				<span class="aui-icon aui-icon-small aui-iconfont-space-personal">Manage Feature Owner</span>
+		    			</a>
+	    			</td>
+		    		<td>
+		    			<a href="#" data-proj-key="{$projKey}" data-repos-name="{$reposName}" class="edit-feature-reviewer">
+		    				<span class="aui-icon aui-icon-small aui-iconfont-space-personal">Manage Feature Reviewers</span>
+		    			</a>
+	    			</td>
+		    		<td>
+		    			<a href="" data-proj-key="{$projKey}" data-repos-name="{$reposName}" class="proj-repos-remove">Remove</a>
+		    		</td>
+		    	</tr>
+		    	{/if}
+	    	{/foreach}
+	    {/foreach}
+		    </tbody>
+		</table>
+	
+	{/if}
+</div>
+
+<section role="dialog" id="feature-dialog" class="aui-layer aui-dialog2 aui-dialog2-medium" aria-hidden="true">
+    <!-- Dialog header -->
+    <header class="aui-dialog2-header">
+        <!-- The dialog's title -->
+        <h2 class="aui-dialog2-header-main">Update IPFeature</h2>
+        <!-- Actions to render on the right of the header -->
+<!--         <div class="aui-dialog2-header-secondary">
+            <form class="aui" action="#">
+                <input id="feature-search" class="text" type="search" name="search">
+            </form>
+        </div> -->
+        <!-- Close icon -->
+        <a class="aui-dialog2-header-close">
+            <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+        </a>
+    </header>
+    <!-- Main dialog content -->
+    <div class="aui-dialog2-content">
+        <textarea autofocus="autofocus" rows="20" cols="70"></textarea>
+    </div>
+    <!-- Dialog footer -->
+    <footer class="aui-dialog2-footer">
+        <!-- Actions to render on the right of the footer -->
+        <div class="aui-dialog2-footer-actions">
+            <button id="dialog-submit-button" class="aui-button aui-button-primary">Save</button>
+            <button id="dialog-close-button" class="aui-button aui-button-link">Close</button>
+        </div>
+    </footer>
+</section>
+
+<section role="dialog" id="reviewer-dialog" class="aui-layer aui-dialog2 aui-dialog2-medium" aria-hidden="true">
+    <!-- Dialog header -->
+    <header class="aui-dialog2-header">
+        <!-- The dialog's title -->
+        <h2 class="aui-dialog2-header-main">Update Reviewers</h2>
+        <!-- Close icon -->
+        <a class="aui-dialog2-header-close">
+            <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+        </a>
+    </header>
+    <!-- Main dialog content -->
+    <div class="aui-dialog2-content">
+        <textarea autofocus="autofocus" rows="20" cols="70"></textarea>
+    </div>
+    <!-- Dialog footer -->
+    <footer class="aui-dialog2-footer">
+        <!-- Actions to render on the right of the footer -->
+        <div class="aui-dialog2-footer-actions">
+            <button id="dialog-submit-button" class="aui-button aui-button-primary">Save</button>
+            <button id="dialog-close-button" class="aui-button aui-button-link aui-iconfont-close-dialog">Close</button>
+        </div>
+    </footer>
+</section>
+</body>
+</html>
+{/template}

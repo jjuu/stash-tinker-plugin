@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="nxp-workflow-tinker" />
+
+    <!-- add our web resources -->
+    <web-resource key="tinker-resources" name="nxp-workflow-tinker Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.atlassian.auiplugin:jquery</dependency>
+		<dependency>com.atlassian.auiplugin:dialog2</dependency>
+		<dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<dependency>com.atlassian.auiplugin:aui-table-sortable</dependency>
+		
+        <!-- transform Soy templates into JS -->
+        <resource type="download" name="tinker.css" location="/css/tinker.css" />
+        <resource type="download" name="tinker.js" location="/js/tinker.js" />
+        <resource type="download" name="images/" location="/images" />
+
+        <context>nxp-workflow-tinker</context>
+    </web-resource>
+
+	<web-resource key="tinker-resources-auto-reviewers" name="nxp-workflow-tinker Web Resources">
+		<dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+		
+		<resource type="download" name="auto-reviewers.js" location="/js/auto-reviewers.js" />
+		<context>stash.page.pullRequest.create</context>
+	</web-resource>
+
+    <!-- publish our component -->
+    <servlet name="AdminConfigServlet"
+		class="com.nxp.bj.tinker.TinkerConfigServlet"
+		key="tinkerConfig">
+    	<url-pattern>/tinkerConfig</url-pattern>
+    </servlet>
+
+	<servlet name="TinkerRetrieveReposServlet"
+		class="com.nxp.bj.tinker.TinkerRetrieveReposServlet"
+		key="tinkerRetrieveRepos">
+		<url-pattern>/tinkerConfig/retrieveRepos</url-pattern>
+	</servlet>
+
+	<servlet name="TinkerRemoveReposServlet"
+		class="com.nxp.bj.tinker.TinkerRemoveProjReposItemServlet"
+		key="tinkerRemoveRepos">
+		<url-pattern>/removeTinkerRepos</url-pattern>
+	</servlet>
+	
+	<servlet name="TinkerAutoReviewers"
+		class="com.nxp.bj.tinker.TinkerTargetSourceReviewersServlet"
+		key="tinkerAutoReviewers">
+		<url-pattern>/tinker/reviews</url-pattern>	
+	</servlet>
+	
+	<!-- 
+	<servlet name="TinkerCSVFileUploadServlet"
+		class="com.nxp.bj.tinker.TinkerBatchUploadIPOwnerServlet"
+		key="tinkerUploadCSV">
+		<url-pattern>/tinkerConfig/uploadCSV</url-pattern>
+	</servlet>
+	-->
+
+    <!-- add our stash-specific resources -->
+    <stash-resource key="soy-templates">
+        <directory location="/templates/">
+            <include>/**/tinker-config.soy</include>
+        </directory>
+
+        <dependency>com.atlassian.stash.stash-web-plugin:server-soy-templates</dependency>
+        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+    </stash-resource>
+
+    <!-- import from the product container -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" filter="" />
+    <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" filter="" />
+    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" filter="" />
+    <component-import key="i18nService" interface="com.atlassian.stash.i18n.I18nService" />
+    <component-import key="ProjectService" interface="com.atlassian.stash.project.ProjectService" filter="" />
+    <component-import key="RepositoryService" interface="com.atlassian.stash.repository.RepositoryService" filter="" />
+    <component-import key="applicationLinkService" interface="com.atlassian.applinks.api.ApplicationLinkService" filter="" />
+    <component-import key="entityLinkService" interface="com.atlassian.applinks.api.EntityLinkService" filter="" />
+    <component-import key="commitService" interface="com.atlassian.stash.commit.CommitService" filter="" />
+    <component-import key="userService" interface="com.atlassian.stash.user.UserService" filter="" />
+
+    <!-- create our component -->
+    <component key="TinkerPullRequestOpenRequestedListener" class="com.nxp.bj.tinker.TinkerPullRequestOpenRequestedListener" />
+	<component key="TinkerPullRequestOpenedListener" class="com.nxp.bj.tinker.TinkerPullRequestOpenedListener" />
+	<component key="TinkerPullRequestMergedListener" class="com.nxp.bj.tinker.TinkerPullRequestMergedListener" />
+	<component key="TinkerPullRequestDeclinedListener" class="com.nxp.bj.tinker.TinkerPullRequestDeclinedListener" />
+
+    <component key="tinkerStashService" class="com.nxp.bj.tinker.service.StashServiceImpl" public="true">
+        <interface>com.nxp.bj.tinker.service.interfaces.StashService</interface>
+    </component>
+
+    <component-import key="soyTemplateRenderer" interface="com.atlassian.soy.renderer.SoyTemplateRenderer" filter=""/>
+    <component-import key="pageBuilderService" interface="com.atlassian.webresource.api.assembler.PageBuilderService" filter=""/>
+
+</atlassian-plugin>
